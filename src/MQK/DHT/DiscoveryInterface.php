@@ -4,5 +4,11 @@ namespace MQK\DHT;
 
 interface DiscoveryInterface
 {
-    function completed();
+    /**
+     * 当节点扫描完成
+     *
+     * @param Node $node
+     * @return void
+     */
+    function completed(Node $node);
 }

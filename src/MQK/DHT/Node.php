@@ -4,7 +4,8 @@ namespace MQK\DHT;
 /**
  * Node 模型
  */
-class Node{
+class Node implements \JsonSerializable
+{
     /**
      * 保存node id
      * @var string
@@ -72,5 +73,12 @@ class Node{
      */
     public function to_array(){
         return array('id' => $this->id, 'ip' => $this->ip, 'port' => $this->port);
+    }
+
+    public function jsonSerialize()
+    {
+        $jsonObject = $this->to_array();
+        $jsonObject['id'] = base64_encode($jsonObject['id']);
+        return $jsonObject;
     }
 }

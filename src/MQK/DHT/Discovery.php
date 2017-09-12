@@ -35,11 +35,9 @@ class Discovery
 
         $factory->createClient("udp://" . $address)->then(
             function ($client) {
-                $this->logger->debug("Created client");
                 $this->client = $client;
                 try {
                     $bMessage = $this->buildMessage($this->id, $this->node->nid);
-                    $this->logger->debug("Send message", $bMessage);
                 } catch (\Exception $e) {
                     var_dump($e);
                 }
@@ -61,8 +59,6 @@ class Discovery
     public function message($message, $serverAddress, $client)
     {
         list($host, $port) = explode(":", $serverAddress);
-        $this->logger->debug("send message");
-
         $message = Decode::decode($message);
 
         if ('r' == $message['y']) {
@@ -76,12 +72,17 @@ class Discovery
                 $targetIdEncoded = base64_encode($node->nid);
 
                 $this->logger->debug("Queued node {$idEncoded} {$targetIdEncoded} {$node->ip} {$node->port}");
+
+                if ($this->redis->hExists("dht", $idEncoded)) {
+                    $this->logger->debug("Node {$targetIdEncoded} has exists");
+                    continue;
+                }
                 $nodeDiscovery = new NodeDiscoveryEvent($idEncoded, $node->ip, $node->port, $targetIdEncoded);
                 \K::dispatch($nodeDiscovery);
             }
 
             if (null != $this->ifDiscovery)
-                $this->ifDiscovery->completed();
+                $this->ifDiscovery->completed($this->node);
         } else if ('q' == $message['y']) {
             if ('ping' == $message['q']) {
                 echo "ping\n";
