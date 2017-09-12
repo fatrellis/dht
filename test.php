@@ -44,46 +44,6 @@ $datagramFactory->createServer('udp://0.0.0.0:6882')
     }
 );
 
-class DiscoveryController
-{
-    private $id;
-    private $queue = [];
-    private $nodes = [];
-    private $count = 0;
-
-    const MAX = 10;
-
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-
-    public function addNode($node)
-    {
-        $this->nodes[] = $node;
-        $this->queue[] = $node;
-
-        $this->discovery();
-    }
-
-    public function discovery()
-    {
-//        var_dump(count($this->queue));
-        if (count($this->queue) < self::MAX) {
-            $node = array_shift($this->queue);
-
-            new Discovery($this, $this->id, $node);
-        }
-    }
-
-    public function discoveryComplete($discovery)
-    {
-        $this->count += 1;
-        echo "Count {$this->count}\n";
-    }
-}
-
-$controller = new DiscoveryController($id);
 
 use MQK\DHT\Discovery;
 $redis = \MQK\RedisFactory::shared()->createRedis();
