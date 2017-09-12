@@ -1,0 +1,12 @@
+{
+  "require": {
+    "fatrellis/mqk": "dev-master",
+    "react/datagram": "^1.2",
+    "monolog/monolog": "^1.23"
+  },
+  "autoload": {
+    "psr-4": {
+      "MQK\\": "src/MQK"
+    }
+  }
+}
